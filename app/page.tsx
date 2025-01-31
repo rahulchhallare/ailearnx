@@ -1,9 +1,12 @@
+'use client'
+
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
 import { Brain, GraduationCap, Trophy, Briefcase, Code } from 'lucide-react'
 import Image from "next/image"
 import Link from "next/link"
+import { CompanyLogo } from "@/components/company-logo"
 
 export default function Home() {
   const companyLogos = [
@@ -26,11 +29,6 @@ export default function Home() {
       name: "IBM",
       logo: "/companies/ibm.svg",
       color: "#1F70C1"
-    },
-    {
-      name: "Meta",
-      logo: "/companies/meta.svg",
-      color: "#0668E1"
     }
   ]
 
@@ -70,11 +68,11 @@ export default function Home() {
                 <h3 className="font-semibold text-emerald-900">AI Jobs</h3>
                 <p className="text-sm text-emerald-600/80">Find your next role</p>
               </Link>
-              <Link href="/practice" 
+              <Link href="/events" 
                 className="group p-6 bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl hover:shadow-lg transition-all duration-200 border border-purple-100">
                 <Code className="h-8 w-8 text-purple-600 mb-2" />
-                <h3 className="font-semibold text-purple-900">Practice</h3>
-                <p className="text-sm text-purple-600/80">Sharpen your skills</p>
+                <h3 className="font-semibold text-purple-900">Events</h3>
+                <p className="text-sm text-purple-600/80">Join AI workshops & meetups</p>
               </Link>
             </div>
           </div>
@@ -144,27 +142,11 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center items-center gap-12">
             {companyLogos.map((company) => (
-              <div
+              <CompanyLogo 
                 key={company.name}
-                className="relative group cursor-pointer transition-all duration-200 hover:-translate-y-1"
-              >
-                <Image
-                  src={company.logo}
-                  alt={`${company.name} logo`}
-                  width={120}
-                  height={40}
-                  className="object-contain transition-opacity duration-200"
-                  style={{ filter: 'grayscale(100%)', opacity: 0.7 }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.filter = 'none'
-                    e.currentTarget.style.opacity = '1'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.filter = 'grayscale(100%)'
-                    e.currentTarget.style.opacity = '0.7'
-                  }}
-                />
-              </div>
+                logo={company.logo}
+                name={company.name}
+              />
             ))}
           </div>
         </div>
@@ -174,4 +156,3 @@ export default function Home() {
     </div>
   )
 }
-

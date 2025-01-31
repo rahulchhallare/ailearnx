@@ -53,10 +53,10 @@ export function SiteHeader() {
             Mentorship
           </Link>
           <Link 
-            href="/practice" 
+            href="/events" 
             className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
           >
-            Practice
+            Events
           </Link>
         </nav>
 
