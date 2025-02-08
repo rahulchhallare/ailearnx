@@ -1,6 +1,5 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
   "framework": "nextjs",
   "regions": ["iad1"],
   "builds": [
@@ -10,4 +9,3 @@
     }
   ]
 }
-
