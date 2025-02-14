@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Brain, Github, Mail } from 'lucide-react'
+import { Brain, Linkedin, Mail } from 'lucide-react'
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -18,13 +18,13 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<{[key: string]: boolean}>({
     email: false,
     google: false,
-    github: false
+    linkedin: false
   })
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(prev => ({ ...prev, email: true }))
-    
+
     try {
       const formData = new FormData(e.target as HTMLFormElement)
       const email = formData.get('email') as string
@@ -59,13 +59,13 @@ export default function LoginPage() {
     }
   }
 
-  const handleGithubSignIn = async () => {
-    setIsLoading(prev => ({ ...prev, github: true }))
+  const handleLinkedInSignIn = async () => {
+    setIsLoading(prev => ({ ...prev, linkedin: true }))
     try {
-      await signIn('github', { callbackUrl: '/dashboard' })
+      await signIn('linkedin', { callbackUrl: '/dashboard' })
     } catch (error) {
-      toast.error("Failed to sign in with GitHub")
-      setIsLoading(prev => ({ ...prev, github: false }))
+      toast.error("Failed to sign in with LinkedIn")
+      setIsLoading(prev => ({ ...prev, linkedin: false }))
     }
   }
 
@@ -85,27 +85,27 @@ export default function LoginPage() {
               <form onSubmit={handleEmailSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    name="email" 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    required 
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password" 
-                    name="password" 
-                    type="password" 
-                    placeholder="Enter your password" 
-                    required 
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    required
                   />
                 </div>
-                <Button 
-                  className="w-full" 
-                  type="submit" 
+                <Button
+                  className="w-full"
+                  type="submit"
                   disabled={isLoading.email}
                 >
                   {isLoading.email ? "Signing in..." : "Sign In"}
@@ -122,17 +122,17 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
-                  onClick={handleGithubSignIn}
-                  disabled={isLoading.github}
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleLinkedInSignIn}
+                  disabled={isLoading.linkedin}
                 >
-                  <Github className="w-4 h-4 mr-2" />
-                  {isLoading.github ? "Signing in..." : "GitHub"}
+                  <Linkedin className="w-4 h-4 mr-2" />
+                  LinkedIn
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full"
                   onClick={handleGoogleSignIn}
                   disabled={isLoading.google}
@@ -169,4 +169,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

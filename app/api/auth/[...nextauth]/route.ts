@@ -1,27 +1,27 @@
-import { NextAuthOptions } from 'next-auth'
-import NextAuth from 'next-auth/next'
-import GitHubProvider from 'next-auth/providers/github'
+import NextAuth from 'next-auth'
+import GoogleProvider from 'next-auth/providers/google'
+import LinkedInProvider from 'next-auth/providers/linkedin'
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
   providers: [
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID ?? '',
+      clientSecret: process.env.GOOGLE_SECRET ?? '',
+    }),
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_ID ?? '',
+      clientSecret: process.env.LINKEDIN_SECRET ?? '',
+      authorization: {
+        params: {
+          client_id: process.env.LINKEDIN_ID,
+          scope: 'profile openid',
+        }
+      }
     })
   ],
   pages: {
     signIn: '/login',
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user }
-    },
-    async session({ session, token }) {
-      session.user = token as any
-      return session
-    }
   }
-}
+})
 
-const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
