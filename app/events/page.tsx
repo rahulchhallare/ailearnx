@@ -9,10 +9,10 @@ import Image from "next/image"
 export default function EventsPage() {
   const events = [
     {
-      title: "AI Summit 2024",
+      title: "AI Summit 2025",
       description: "Join industry leaders for insights into the future of AI",
       image: "/placeholder.svg?height=300&width=600",
-      date: "Mar 15, 2024",
+      date: "Mar 15, 2025",
       location: "San Francisco, CA",
       attendees: "500+",
       duration: "2 days",
@@ -22,7 +22,7 @@ export default function EventsPage() {
       title: "Machine Learning Workshop",
       description: "Hands-on workshop on implementing ML models",
       image: "/placeholder.svg?height=300&width=600",
-      date: "Feb 28, 2024",
+      date: "Feb 28, 2025",
       location: "Virtual",
       attendees: "200+",
       duration: "4 hours",
@@ -32,7 +32,7 @@ export default function EventsPage() {
       title: "AI Ethics Panel Discussion",
       description: "Expert panel on ethical considerations in AI development",
       image: "/placeholder.svg?height=300&width=600",
-      date: "Feb 10, 2024",
+      date: "Feb 10, 2025",
       location: "New York, NY",
       attendees: "300+",
       duration: "3 hours",
