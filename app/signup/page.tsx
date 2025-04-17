@@ -23,31 +23,51 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(prev => ({ ...prev, email: true }))
-    
+    console.log("Signup form submitted") // Debugging log
+    setIsLoading((prev) => ({ ...prev, email: true }))
+
     try {
       const formData = new FormData(e.target as HTMLFormElement)
-      const firstName = formData.get('firstName')
-      const lastName = formData.get('lastName')
-      const email = formData.get('email')
-      const password = formData.get('password')
-      const confirmPassword = formData.get('confirmPassword')
+      const firstName = formData.get('firstName') as string
+      const lastName = formData.get('lastName') as string
+      const email = formData.get('email') as string
+      const password = formData.get('password') as string
+      const confirmPassword = formData.get('confirmPassword') as string
 
-      // Password validation
+      // Validate password length
+      if (password.length < 8) {
+        toast.error("Password must be at least 8 characters long")
+        return
+      }
+
+      // Validate passwords match
       if (password !== confirmPassword) {
         toast.error("Passwords do not match")
         return
       }
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      // Send POST request to the signup API
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, email, password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Show error toast if signup fails
+        toast.error(data.error || "Failed to create account")
+        return
+      }
+
+      // Show success toast and redirect to login page
       toast.success("Account created successfully!")
-      router.push('/dashboard')
+      router.push('/login')
     } catch (error) {
       toast.error("Something went wrong. Please try again.")
     } finally {
-      setIsLoading(prev => ({ ...prev, email: false }))
+      setIsLoading((prev) => ({ ...prev, email: false }))
     }
   }
 
