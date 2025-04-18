@@ -1,9 +1,16 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Brain, Search, Plus, Briefcase } from 'lucide-react'
+import { Brain, Search, ChevronDown, Plus, Briefcase } from 'lucide-react'
 import Link from "next/link"
+import { useSession, signOut } from "next-auth/react"
+import { useState } from "react"
 
 export function SiteHeader() {
+  const { data: session } = useSession() // Get session data
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false) // State for dropdown
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
       <div className="container mx-auto h-16 flex items-center justify-between gap-4">
@@ -63,20 +70,6 @@ export function SiteHeader() {
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
           <Button 
-            variant="ghost"
-            className="text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-            asChild
-          >
-            <Link href="/login">Login</Link>
-          </Button>
-          <Button 
-            variant="default"
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            asChild
-          >
-            <Link href="/signup">Sign up</Link>
-          </Button>
-          <Button 
             variant="outline" 
             className="hidden md:inline-flex items-center gap-1 border-gray-200 hover:border-blue-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600"
             asChild
@@ -95,9 +88,72 @@ export function SiteHeader() {
               For Business
             </Link>
           </Button>
+
+          {/* Profile Section */}
+          {!session ? (
+            <>
+              <Button 
+                variant="ghost"
+                className="text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                asChild
+              >
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button 
+                variant="default"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                asChild
+              >
+                <Link href="/signup">Sign up</Link>
+              </Button>
+            </>
+          ) : (
+            <div className="relative">
+              <button
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <span>{session.user?.name || "User"}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <div className="p-4 border-b border-gray-200">
+                    <p className="text-sm font-medium text-gray-800">{session.user?.name || "N/A"}</p>
+                    <p className="text-xs text-gray-500">{session.user?.email || "N/A"}</p>
+                  </div>
+                  <ul className="py-2">
+                    <li>
+                      <Link
+                        href="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                      >
+                        View Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/settings"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                      >
+                        Settings
+                      </Link>
+                    </li>
+                  </ul>
+                  <div className="border-t border-gray-200">
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => signOut()}
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </header>
   )
 }
-
