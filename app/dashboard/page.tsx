@@ -1,3 +1,5 @@
+'use client' // Mark this file as a Client Component
+
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
@@ -5,8 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Trophy, MessageSquare, Briefcase } from 'lucide-react'
 import Link from "next/link"
+import { useSession } from "next-auth/react" // Import useSession for user data
 
 export default function DashboardPage() {
+  const { data: session } = useSession() // Get session data
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -131,4 +136,3 @@ export default function DashboardPage() {
     </div>
   )
 }
-
