@@ -1,12 +1,10 @@
+'use client' // Mark this file as a Client Component
+
 import "@/styles/globals.css"
 import { Inter } from 'next/font/google'
+import { SessionProvider } from "next-auth/react" // Import SessionProvider
 
 const inter = Inter({ subsets: ["latin"] })
-
-export const metadata = {
-  title: "AILearnX - Master AI, Build the Future",
-  description: "Learn AI, compete in challenges, and find AI jobs on the world's largest AI learning platform.",
-}
 
 export default function RootLayout({
   children,
@@ -15,7 +13,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <SessionProvider> {/* Wrap the application with SessionProvider */}
+          {children}
+        </SessionProvider>
+      </body>
     </html>
   )
 }
