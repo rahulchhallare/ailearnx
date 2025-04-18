@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Brain, Github, Mail } from 'lucide-react'
+import { Brain, Linkedin, Mail } from 'lucide-react'
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -59,13 +59,13 @@ export default function LoginPage() {
     }
   }
 
-  const handleGithubSignIn = async () => {
-    setIsLoading(prev => ({ ...prev, github: true }))
+  const handleLinkedInSignIn = async () => {
+    setIsLoading(prev => ({ ...prev, linkedin: true }))
     try {
-      await signIn('github', { callbackUrl: '/dashboard' })
+      await signIn('linkedin', { callbackUrl: '/dashboard' })
     } catch (error) {
-      toast.error("Failed to sign in with GitHub")
-      setIsLoading(prev => ({ ...prev, github: false }))
+      toast.error("Failed to sign in with LinkedIn")
+      setIsLoading(prev => ({ ...prev, linkedin: false }))
     }
   }
 
@@ -122,14 +122,14 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
-                  onClick={handleGithubSignIn}
-                  disabled={isLoading.github}
+              <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleLinkedInSignIn}
+                  disabled={isLoading.linkedin}
                 >
-                  <Github className="w-4 h-4 mr-2" />
-                  {isLoading.github ? "Signing in..." : "GitHub"}
+                  <Linkedin className="w-4 h-4 mr-2" />
+                  LinkedIn
                 </Button>
                 <Button 
                   variant="outline" 
