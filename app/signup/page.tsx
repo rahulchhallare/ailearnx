@@ -11,7 +11,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Brain, Github, Mail } from 'lucide-react'
 import Link from "next/link"
 import { toast } from "sonner"
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "sonner"
 
 export default function SignupPage() {
   const router = useRouter()
@@ -34,12 +34,6 @@ export default function SignupPage() {
       const password = formData.get('password') as string
       const confirmPassword = formData.get('confirmPassword') as string
 
-      // Validate password length
-      if (password.length < 8) {
-        toast.error("Password must be at least 8 characters long")
-        return
-      }
-
       // Validate passwords match
       if (password !== confirmPassword) {
         toast.error("Passwords do not match")
@@ -61,9 +55,13 @@ export default function SignupPage() {
         return
       }
 
-      // Show success toast and redirect to login page
+      // Show success toast
       toast.success("Account created successfully!")
-      router.push('/login')
+
+      // Delay redirection to allow toast to display
+      setTimeout(() => {
+        router.push('/login')
+      }, 2000) // 2-second delay
     } catch (error) {
       toast.error("Something went wrong. Please try again.")
     } finally {
@@ -152,9 +150,6 @@ export default function SignupPage() {
                     placeholder="Create a password"
                     required
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Must be at least 8 characters long
-                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -232,8 +227,7 @@ export default function SignupPage() {
         </div>
       </main>
       <SiteFooter />
-      <Toaster />
+      <Toaster position="top-center" />
     </div>
   )
 }
-
