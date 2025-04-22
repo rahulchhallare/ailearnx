@@ -24,6 +24,7 @@ const handler = NextAuth({
       token: "https://www.linkedin.com/oauth/v2/accessToken", // Token endpoint
       userinfo: "https://api.linkedin.com/v2/me", // Userinfo endpoint
       profile(profile) {
+        console.log("LinkedIn profile response:", profile) // Debug log for LinkedIn profile
         return {
           id: profile.id, // LinkedIn provides `id` as the unique identifier
           name: `${profile.localizedFirstName} ${profile.localizedLastName}` || null, // Combine first and last name
@@ -41,11 +42,15 @@ const handler = NextAuth({
       async authorize(credentials) {
         const { email, password } = credentials ?? {}
 
+        console.log("Credentials received:", { email, password: !!password }) // Debug log for received credentials
+
         if (!email || !password) {
+          console.error("Missing email or password") // Debug log for missing credentials
           return null
         }
 
         try {
+          console.log("Connecting to the database...") // Debug log for database connection
           const connection = await mysql.createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
@@ -53,23 +58,32 @@ const handler = NextAuth({
             database: process.env.DB_NAME,
           })
 
+          console.log("Executing query to find user by email...") // Debug log for query execution
           const [rows] = await connection.execute(
             "SELECT * FROM users WHERE email = ?",
             [email]
           )
 
           await connection.end()
+          console.log("Database connection closed.") // Debug log for closing the connection
 
           if (rows.length > 0) {
             const user = rows[0]
+            console.log("User found:", user) // Debug log for found user
 
             const isPasswordValid = await bcrypt.compare(password, user.password)
+            console.log("Password validation result:", isPasswordValid) // Debug log for password validation
+
             if (isPasswordValid) {
               return { id: user.id, name: user.name, email: user.email }
+            } else {
+              console.error("Invalid password") // Debug log for invalid password
             }
+          } else {
+            console.error("No user found with the provided email") // Debug log for no user found
           }
         } catch (error) {
-          console.error("Error during user authentication:", error)
+          console.error("Error during user authentication:", error) // Debug log for authentication error
         }
 
         return null
@@ -82,7 +96,7 @@ const handler = NextAuth({
   },
   callbacks: {
     async session({ session, token }) {
-      // Add user data to the session object
+      console.log("Session callback triggered:", { session, token }) // Debug log for session callback
       session.user = {
         ...session.user,
         id: token.id,
@@ -92,7 +106,7 @@ const handler = NextAuth({
       return session
     },
     async jwt({ token, user }) {
-      // Add user data to the JWT token
+      console.log("JWT callback triggered:", { token, user }) // Debug log for JWT callback
       if (user) {
         token.id = user.id
         token.name = user.name
@@ -101,7 +115,7 @@ const handler = NextAuth({
       return token
     },
     async redirect({ url, baseUrl }) {
-      // Redirect to the dashboard after login
+      console.log("Redirect callback triggered:", { url, baseUrl }) // Debug log for redirect callback
       if (url === baseUrl || url === `${baseUrl}/` || url === `${baseUrl}/login`) {
         return '/dashboard' // Redirect to dashboard if no specific URL is provided or redirected to login
       }
