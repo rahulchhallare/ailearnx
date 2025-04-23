@@ -116,13 +116,14 @@ const handler = NextAuth({
     },
     async redirect({ url, baseUrl }) {
       console.log("Redirect callback triggered:", { url, baseUrl }) // Debug log for redirect callback
-      if (url === baseUrl || url === `${baseUrl}/` || url === `${baseUrl}/login`) {
-        return '/dashboard' // Redirect to dashboard if no specific URL is provided or redirected to login
-      }
+
+      // If the URL is within the same base URL, allow it
       if (url.startsWith(baseUrl)) {
-        return url // Allow redirects within the same base URL
+        return url
       }
-      return baseUrl // Default fallback
+
+      // Default to the base URL (e.g., homepage or dashboard)
+      return baseUrl
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
