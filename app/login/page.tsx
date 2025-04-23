@@ -1,14 +1,14 @@
 'use client'
 
 import { useState } from "react"
-import { signIn, getSession } from "next-auth/react"
+import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Brain, Linkedin, Mail } from 'lucide-react'
 import Link from "next/link"
 import { toast } from "sonner"
@@ -41,9 +41,7 @@ export default function LoginPage() {
         return
       }
 
-      // Revalidate session and redirect manually
-      await getSession()
-      router.refresh() // Refresh the page to ensure session updates
+      // Redirect to dashboard after successful login
       router.push('/dashboard')
     } catch (error) {
       toast.error("Something went wrong. Please try again.")
@@ -65,9 +63,7 @@ export default function LoginPage() {
         return
       }
 
-      // Revalidate session and redirect manually
-      await getSession()
-      router.refresh() // Refresh the page to ensure session updates
+      // Redirect to dashboard after successful login
       router.push('/dashboard')
     } catch (error) {
       toast.error("Failed to sign in with Google")
@@ -89,9 +85,7 @@ export default function LoginPage() {
         return
       }
 
-      // Revalidate session and redirect manually
-      await getSession()
-      router.refresh() // Refresh the page to ensure session updates
+      // Redirect to dashboard after successful login
       router.push('/dashboard')
     } catch (error) {
       toast.error("Failed to sign in with LinkedIn")
@@ -200,4 +194,3 @@ export default function LoginPage() {
     </div>
   )
 }
-
