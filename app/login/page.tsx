@@ -8,23 +8,23 @@ import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Brain, Linkedin, Mail } from 'lucide-react'
 import Link from "next/link"
 import { toast } from "sonner"
 
 export default function LoginPage() {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState<{[key: string]: boolean}>({
+  const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({
     email: false,
     google: false,
-    github: false
+    linkedin: false,
   })
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(prev => ({ ...prev, email: true }))
-    
+    setIsLoading((prev) => ({ ...prev, email: true }))
+
     try {
       const formData = new FormData(e.target as HTMLFormElement)
       const email = formData.get('email') as string
@@ -33,7 +33,7 @@ export default function LoginPage() {
       const result = await signIn('credentials', {
         email,
         password,
-        redirect: false,
+        redirect: false, // Prevent automatic redirect
       })
 
       if (result?.error) {
@@ -41,31 +41,56 @@ export default function LoginPage() {
         return
       }
 
+      // Redirect to dashboard after successful login
       router.push('/dashboard')
     } catch (error) {
       toast.error("Something went wrong. Please try again.")
     } finally {
-      setIsLoading(prev => ({ ...prev, email: false }))
+      setIsLoading((prev) => ({ ...prev, email: false }))
     }
   }
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(prev => ({ ...prev, google: true }))
+    setIsLoading((prev) => ({ ...prev, google: true }))
     try {
-      await signIn('google', { callbackUrl: '/dashboard' })
+      const result = await signIn('google', {
+        callbackUrl: '/dashboard',
+        redirect: false, // Prevent automatic redirect
+      })
+
+      if (result?.error) {
+        toast.error("Failed to sign in with Google")
+        return
+      }
+
+      // Redirect to dashboard after successful login
+      router.push('/dashboard')
     } catch (error) {
       toast.error("Failed to sign in with Google")
-      setIsLoading(prev => ({ ...prev, google: false }))
+    } finally {
+      setIsLoading((prev) => ({ ...prev, google: false }))
     }
   }
 
   const handleLinkedInSignIn = async () => {
-    setIsLoading(prev => ({ ...prev, linkedin: true }))
+    setIsLoading((prev) => ({ ...prev, linkedin: true }))
     try {
-      await signIn('linkedin', { callbackUrl: '/dashboard' })
+      const result = await signIn('linkedin', {
+        callbackUrl: '/dashboard',
+        redirect: false, // Prevent automatic redirect
+      })
+
+      if (result?.error) {
+        toast.error("Failed to sign in with LinkedIn")
+        return
+      }
+
+      // Redirect to dashboard after successful login
+      router.push('/dashboard')
     } catch (error) {
       toast.error("Failed to sign in with LinkedIn")
-      setIsLoading(prev => ({ ...prev, linkedin: false }))
+    } finally {
+      setIsLoading((prev) => ({ ...prev, linkedin: false }))
     }
   }
 
@@ -85,27 +110,27 @@ export default function LoginPage() {
               <form onSubmit={handleEmailSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    name="email" 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    required 
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password" 
-                    name="password" 
-                    type="password" 
-                    placeholder="Enter your password" 
-                    required 
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    required
                   />
                 </div>
-                <Button 
-                  className="w-full" 
-                  type="submit" 
+                <Button
+                  className="w-full"
+                  type="submit"
                   disabled={isLoading.email}
                 >
                   {isLoading.email ? "Signing in..." : "Sign In"}
@@ -122,17 +147,17 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-              <Button
+                <Button
                   variant="outline"
                   className="w-full"
                   onClick={handleLinkedInSignIn}
                   disabled={isLoading.linkedin}
                 >
                   <Linkedin className="w-4 h-4 mr-2" />
-                  LinkedIn
+                  {isLoading.linkedin ? "Signing in..." : "LinkedIn"}
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full"
                   onClick={handleGoogleSignIn}
                   disabled={isLoading.google}
@@ -169,4 +194,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

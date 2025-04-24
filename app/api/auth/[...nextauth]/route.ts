@@ -64,12 +64,17 @@ const handler = NextAuth({
             const user = rows[0]
 
             const isPasswordValid = await bcrypt.compare(password, user.password)
+
             if (isPasswordValid) {
               return { id: user.id, name: user.name, email: user.email }
+            } else {
+              console.error("Invalid password") // Debug log for invalid password
             }
+          } else {
+            console.error("No user found with the provided email") // Debug log for no user found
           }
         } catch (error) {
-          console.error("Error during user authentication:", error)
+          console.error("Error during user authentication:", error) // Debug log for authentication error
         }
 
         return null
@@ -82,7 +87,6 @@ const handler = NextAuth({
   },
   callbacks: {
     async session({ session, token }) {
-      // Add user data to the session object
       session.user = {
         ...session.user,
         id: token.id,
@@ -92,7 +96,6 @@ const handler = NextAuth({
       return session
     },
     async jwt({ token, user }) {
-      // Add user data to the JWT token
       if (user) {
         token.id = user.id
         token.name = user.name
@@ -101,14 +104,14 @@ const handler = NextAuth({
       return token
     },
     async redirect({ url, baseUrl }) {
-      // Redirect to the dashboard after login
-      if (url === baseUrl || url === `${baseUrl}/` || url === `${baseUrl}/login`) {
-        return '/dashboard' // Redirect to dashboard if no specific URL is provided or redirected to login
-      }
+
+      // If the URL is within the same base URL, allow it
       if (url.startsWith(baseUrl)) {
-        return url // Allow redirects within the same base URL
+        return url
       }
-      return baseUrl // Default fallback
+
+      // Default to the base URL (e.g., homepage or dashboard)
+      return baseUrl
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
