@@ -1,44 +1,23 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Briefcase, MapPin, Building, DollarSign } from 'lucide-react'
-import Link from "next/link"
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Briefcase, MapPin, Building, DollarSign } from "lucide-react";
+import Link from "next/link";
 
-export default function JobsPage() {
-  const jobs = [
-    {
-      id: "senior-ai-engineer",
-      title: "Senior AI Engineer",
-      company: "TechCorp AI",
-      location: "San Francisco, CA",
-      type: "Full-time",
-      salary: "$150k - $200k",
-      description: "Lead AI development projects and implement cutting-edge machine learning solutions",
-      tags: ["Python", "TensorFlow", "PyTorch"]
-    },
-    {
-      id: "ai-product-manager",
-      title: "AI Product Manager",
-      company: "Innovation Labs",
-      location: "New York, NY",
-      type: "Full-time",
-      salary: "$130k - $170k",
-      description: "Drive the development of AI-powered products from conception to launch",
-      tags: ["Product Strategy", "AI", "Agile"]
-    },
-    {
-      id: "machine-learning-researcher",
-      title: "Machine Learning Researcher",
-      company: "AI Research Institute",
-      location: "Boston, MA",
-      type: "Full-time",
-      salary: "$140k - $180k",
-      description: "Conduct research in advanced machine learning and develop novel algorithms",
-      tags: ["Deep Learning", "Research", "Publications"]
-    }
-  ]
+export default async function JobsPage() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+  const res = await fetch(`${apiUrl}/api/jobs`, {
+    cache: "no-store", // Disable caching for fresh data
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch jobs");
+  }
+
+  const jobs = await res.json();
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,8 +32,8 @@ export default function JobsPage() {
           </div>
 
           <div className="grid gap-6">
-            {jobs.map((job) => (
-              <Card key={job.title}>
+            {jobs.map((job: any) => (
+              <Card key={job.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
@@ -87,7 +66,7 @@ export default function JobsPage() {
                     </div>
                     <p className="text-sm">{job.description}</p>
                     <div className="flex flex-wrap gap-2">
-                      {job.tags.map((tag) => (
+                      {job.tags.map((tag: string) => (
                         <Badge key={tag} variant="secondary">
                           {tag}
                         </Badge>
@@ -102,6 +81,6 @@ export default function JobsPage() {
       </main>
       <SiteFooter />
     </div>
-  )
+  );
 }
 
