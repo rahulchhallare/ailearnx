@@ -2,9 +2,35 @@ import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import formidable from "formidable";
+import fs from "fs";
+import path from "path";
+
+export const config = {
+  api: {
+    bodyParser: false, // Disable body parsing to handle FormData
+  },
+};
 
 export async function POST(req: Request) {
   try {
+    const form = new formidable.IncomingForm({
+      uploadDir: path.join(process.cwd(), "uploads"), // Directory to save uploaded files
+      keepExtensions: true, // Keep file extensions
+    });
+
+    const data = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        resolve({ fields, files });
+      });
+    });
+
+    console.log("Parsed Data:", data); // Debugging log
+
+    const { fields, files } = data;
+    const resumeFile = files.resume;
+
     console.log("Request received"); // Debugging log
 
     // Retrieve the session
