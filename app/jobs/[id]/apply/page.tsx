@@ -25,6 +25,7 @@ export default function JobApplicationPage({ params }: { params: { id: string } 
     experience: "",
     coverLetter: "",
   });
+  const [resume, setResume] = useState<File | null>(null); // State for the resume file
   const router = useRouter();
 
   // Fetch job data from the backend
@@ -50,21 +51,35 @@ export default function JobApplicationPage({ params }: { params: { id: string } 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setResume(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted"); // Debugging log
+    console.log("Form submitted"); // Debugging log    
 
-    const dataToSend = { ...formData, jobId: params.id };
-
-    console.log("Data to Send:", dataToSend); // Debugging log
+    const formDataToSend = new FormData();
+    formDataToSend.append("jobId", params.id);
+    formDataToSend.append("firstName", formData.firstName);
+    formDataToSend.append("lastName", formData.lastName);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("phone", formData.phone);
+    formDataToSend.append("location", formData.location);
+    formDataToSend.append("linkedin", formData.linkedin);
+    formDataToSend.append("portfolio", formData.portfolio);
+    formDataToSend.append("experience", formData.experience);
+    formDataToSend.append("coverLetter", formData.coverLetter);
+    if (resume) {
+      formDataToSend.append("resume", resume); // Add the resume file
+    }
 
     try {
       const res = await fetch(`/api/jobs/${params.id}/apply`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend), // Ensure the body is properly stringified
+        body: formDataToSend, // Send FormData
       });
 
       console.log("Response status:", res.status); // Debugging log
@@ -73,8 +88,9 @@ export default function JobApplicationPage({ params }: { params: { id: string } 
         throw new Error("Failed to submit application");
       }
 
-      alert("Application submitted successfully!");
-    } catch (error) {
+    // Redirect to the success page
+    router.push(`/jobs/${params.id}/apply/success`);
+} catch (error) {
       console.error("Error submitting application:", error);
       alert("An error occurred while submitting your application. Please try again.");
     }
@@ -171,6 +187,18 @@ export default function JobApplicationPage({ params }: { params: { id: string } 
                     onChange={handleChange}
                     placeholder="Tell us why you're interested in this position..."
                     className="min-h-[150px]"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="resume">Upload Resume</Label>
+                  <Input
+                    id="resume"
+                    name="resume"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileChange}
                     required
                   />
                 </div>
