@@ -7,6 +7,7 @@ import { Brain, GraduationCap, Trophy, Briefcase, Code } from 'lucide-react'
 import Image from "next/image"
 import Link from "next/link"
 import { CompanyLogo } from "@/components/company-logo"
+import { FellowshipAnnouncement } from "@/components/fellowship-announcement"
 
 export default function Home() {
   const companyLogos = [
@@ -78,7 +79,10 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      
+      {/* Fellowship Announcement */}
+      <FellowshipAnnouncement/>
+      
       {/* User Segments */}
       <section className="w-full py-20 bg-white">
         <div className="container mx-auto px-4">
