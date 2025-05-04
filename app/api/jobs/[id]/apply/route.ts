@@ -1,13 +1,24 @@
 import { NextResponse } from "next/server";
 import { IncomingForm } from "formidable";
-import fs from "fs";
-import path from "path";
-import { Readable } from "stream";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import mysql from "mysql2/promise";
+import { Readable } from "stream";
+import fs from "fs";
 
-export const dynamic = 'force-dynamic';
+// AWS S3 Configuration
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
+const bucketName = process.env.AWS_S3_BUCKET_NAME!;
+
+export const runtime = "nodejs"; // Specify the runtime environment
+export const dynamic = "force-dynamic"; // Ensure the route is dynamic
 
 // Helper function to sanitize values
 function sanitizeValue(value: any, type: "string" | "int" = "string") {
@@ -51,7 +62,6 @@ function requestToIncomingMessage(req: Request): Readable {
 
 export async function POST(req: Request) {
   try {
-
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user || !session.user.id) {
@@ -61,7 +71,6 @@ export async function POST(req: Request) {
     const userId = session.user.id; // Extract user_id from the session
 
     const form = new IncomingForm({
-      uploadDir: path.join(process.cwd(), "uploads"), // Directory to save uploaded files
       keepExtensions: true, // Keep file extensions
     });
 
@@ -78,13 +87,31 @@ export async function POST(req: Request) {
     console.log("Parsed Data:", data); // Debugging log
     const { fields, files } = data;
     const resumeFile = Array.isArray(files.resume) ? files.resume[0] : files.resume; // Handle array or single object
-    const resumePath = resumeFile?.filepath || null; // Get the file path or set to null if not available
 
-    console.log("Resume file path:", resumePath);
+    let resumeUrl = null;
 
-    // Further processing logic here...
-     // Connect to the database
-     const connection = await mysql.createConnection({
+    // Upload the file to S3 if it exists
+    if (resumeFile) {
+      const fileStream = fs.createReadStream(resumeFile.filepath);
+      const fileKey = `resumes/${Date.now()}_${resumeFile.originalFilename}`;
+
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: fileKey,
+        Body: fileStream,
+        ContentType: resumeFile.mimetype,
+      };
+
+      const uploadResult = await s3.send(new PutObjectCommand(uploadParams));
+      console.log("S3 Upload Result:", uploadResult);
+
+      resumeUrl = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
+    }
+
+    console.log("Resume URL:", resumeUrl);
+
+    // Connect to the database
+    const connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
@@ -99,7 +126,7 @@ export async function POST(req: Request) {
     const values = [
       sanitizeValue(fields.jobId, "int"), // Job ID (integer)
       sanitizeValue(userId, "int"), // User ID (integer)
-      sanitizeValue( `${fields.firstName} ${fields.lastName}`.trim()), // Concatenated applicant name (string)
+      sanitizeValue(`${fields.firstName} ${fields.lastName}`.trim()), // Concatenated applicant name (string)
       sanitizeValue(fields.email), // Email (string)
       sanitizeValue(fields.phone), // Phone (string or null)
       sanitizeValue(fields.location), // Location (string or null)
@@ -107,14 +134,13 @@ export async function POST(req: Request) {
       sanitizeValue(fields.portfolio), // Portfolio URL (string or null)
       sanitizeValue(fields.experience, "int"), // Experience (integer)
       sanitizeValue(fields.coverLetter), // Cover letter (string or null)
-      sanitizeValue(resumePath), // Resume file path (string or null)
+      sanitizeValue(resumeUrl), // Resume file URL (string or null)
     ];
 
     const [result] = await connection.execute(query, values);
     console.log("Database Insert Result:", result); // Debugging log
 
     await connection.end();
-
 
     return NextResponse.json({ message: "Application submitted successfully" });
   } catch (error) {
