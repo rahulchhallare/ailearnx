@@ -55,7 +55,7 @@ export default function AboutPage() {
               </div>
               <div className="relative">
                 <Image
-                  src="/placeholder.svg?height=400&width=600"
+                  src="/about.jpg?height=400&width=600"
                   alt="About AILearnX"
                   width={600}
                   height={400}
@@ -67,7 +67,7 @@ export default function AboutPage() {
         </section>
 
         {/* Stats Section */}
-        <section className="py-20 bg-muted">
+        <section className="hidden py-20 bg-muted">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {stats.map((stat) => (
@@ -108,7 +108,7 @@ export default function AboutPage() {
         </section>
 
         {/* Team Section */}
-        <section className="py-20 bg-muted">
+        <section className="hidden py-20 bg-muted">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold">Our Team</h2>
