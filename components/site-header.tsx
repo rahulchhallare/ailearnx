@@ -65,6 +65,12 @@ export function SiteHeader() {
           >
             Events
           </Link>
+          <Link 
+            href="/ai-tools" 
+            className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
+          >
+            AI Tools
+          </Link>
         </nav>
 
         {/* Action Buttons */}
@@ -157,3 +163,6 @@ export function SiteHeader() {
     </header>
   )
 }
+
+
+
