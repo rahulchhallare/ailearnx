@@ -1,47 +1,61 @@
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Briefcase, MapPin, Building, DollarSign, Clock, GraduationCap, Users } from 'lucide-react'
-import Link from "next/link"
+"use client";
 
-// This would normally come from a database
-const jobData = {
-  id: "senior-ai-engineer",
-  title: "Senior AI Engineer",
-  company: "TechCorp AI",
-  location: "San Francisco, CA",
-  type: "Full-time",
-  salary: "$150k - $200k",
-  experience: "5+ years",
-  description: "We're looking for a Senior AI Engineer to join our growing team. You'll be responsible for leading AI development projects and implementing cutting-edge machine learning solutions.",
-  responsibilities: [
-    "Design and implement machine learning models",
-    "Lead technical architecture discussions",
-    "Mentor junior engineers",
-    "Collaborate with product and research teams",
-    "Drive innovation in AI/ML technologies"
-  ],
-  requirements: [
-    "5+ years of experience in AI/ML development",
-    "Strong background in Python, TensorFlow, and PyTorch",
-    "Experience with large-scale ML systems",
-    "PhD or MS in Computer Science or related field",
-    "Proven track record of delivering AI solutions"
-  ],
-  benefits: [
-    "Competitive salary and equity",
-    "Health, dental, and vision insurance",
-    "401(k) matching",
-    "Flexible work hours",
-    "Remote work options",
-    "Professional development budget"
-  ],
-  tags: ["Python", "TensorFlow", "PyTorch", "Machine Learning", "Deep Learning"]
-}
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Briefcase, MapPin, Building, DollarSign } from "lucide-react";
+import Link from "next/link";
 
-export default function JobDetailsPage() {
+export default function JobDetailsPage({ params }: { params: { id: string } }) {
+  const [jobData, setJobData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchJobData = async () => {
+      try {
+        const res = await fetch(`/api/jobs/${params.id}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch job data");
+        }
+        const data = await res.json();
+        console.log("Fetched Job Data:", data); // Debugging log
+        setJobData(data);
+        setLoading(false); // Set loading to false after data is fetched
+      } catch (error) {
+        console.error("Error fetching job data:", error);
+        setError("Failed to load job details. Please try again later.");
+        setLoading(false); // Set loading to false even if there's an error
+      }
+    };
+
+    fetchJobData();
+  }, [params.id]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <SiteHeader />
+        <main className="container mx-auto px-4 py-12">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-500">{error}</h1>
+            <Button onClick={() => router.push("/jobs")}>Go Back to Jobs</Button>
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -120,9 +134,13 @@ export default function JobDetailsPage() {
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-4 space-y-2">
-                  {jobData.benefits.map((item) => (
-                    <li key={item} className="text-muted-foreground">{item}</li>
-                  ))}
+                  {jobData.benefits && jobData.benefits.length > 0 ? (
+                    jobData.benefits.map((item: string) => (
+                      <li key={item} className="text-muted-foreground">{item}</li>
+                    ))
+                  ) : (
+                    <li className="text-muted-foreground">No benefits listed</li>
+                  )}
                 </ul>
               </CardContent>
             </Card>
@@ -133,11 +151,15 @@ export default function JobDetailsPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {jobData.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
-                      {tag}
-                    </Badge>
-                  ))}
+                  {jobData.tags && jobData.tags.length > 0 ? (
+                    jobData.tags.map((tag: string) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground">No skills listed</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -159,6 +181,6 @@ export default function JobDetailsPage() {
       </main>
       <SiteFooter />
     </div>
-  )
+  );
 }
 
