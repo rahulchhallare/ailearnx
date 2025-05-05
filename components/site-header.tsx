@@ -23,12 +23,12 @@ export function SiteHeader() {
             </span>
           </Link>
           <div className="hidden md:flex relative max-w-[320px]">
-            <div className="absolute inset-y-0 left-2 flex items-center">
+            <div className="hidden absolute inset-y-0 left-2 flex items-center">
               <Search className="h-4 w-4 text-gray-500" />
             </div>
             <Input 
               placeholder="Search AI Opportunities" 
-              className="pl-8 bg-gray-50/50 border-gray-200 focus:border-blue-200 focus:ring-blue-200"
+              className="hidden pl-8 bg-gray-50/50 border-gray-200 focus:border-blue-200 focus:ring-blue-200"
             />
           </div>
         </div>
@@ -125,7 +125,7 @@ export function SiteHeader() {
                 className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                <span>{session.user?.name || "User"}</span>
+                <span className="whitespace-nowrap">{session.user?.name || "User"}</span>
                 <ChevronDown className="h-4 w-4" />
               </button>
               {isDropdownOpen && (

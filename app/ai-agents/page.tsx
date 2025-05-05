@@ -25,7 +25,8 @@ import {
   Users,
   Edit3,
 } from "lucide-react"
-
+import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 // Real AI agents data with proper descriptions, features, icons, affiliate links, and market prices
 const aiAgents = [
   {
@@ -581,7 +582,8 @@ export default function AIAgentsPage() {
   })
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
+          <SiteHeader />
       {/* Hero Section */}
       <section className="py-12 text-center">
         <div className="container mx-auto px-4">
@@ -905,6 +907,7 @@ export default function AIAgentsPage() {
           </div>
         </div>
       </section>
-    </main>
+      <SiteFooter/>
+    </div>
   )
 }
