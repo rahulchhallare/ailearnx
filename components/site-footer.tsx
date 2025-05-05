@@ -20,13 +20,13 @@ export function SiteFooter() {
                 <a href="mailto:support@ailearnx.com">support@ailearnx.com</a>
               </div>
               <div className="flex space-x-4">
-                <Link href="#" className="hover:opacity-80">
+                <Link href="https://x.com/AI_LearnX_" className="hover:opacity-80">
                   <Twitter className="h-5 w-5" style={{ color: '#1DA1F2' }} />
                 </Link>
                 <Link href="https://www.linkedin.com/company/ailearnx/" className="hover:opacity-80">
                   <Linkedin className="h-5 w-5" style={{ color: '#0A66C2' }} />
                 </Link>
-                <Link href="#" className="hover:opacity-80">
+                <Link href="https://www.facebook.com/profile.php?id=61570843979864" className="hover:opacity-80">
                   <Facebook className="h-5 w-5" style={{ color: '#1877F2' }} />
                 </Link>
                 <Link href="https://www.instagram.com/ailearnx" className="hover:opacity-80">
