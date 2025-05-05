@@ -71,6 +71,12 @@ export function SiteHeader() {
           >
             AI Tools
           </Link>
+          <Link 
+            href="/ai-agents" 
+            className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
+          >
+            AI Agents
+          </Link>
         </nav>
 
         {/* Action Buttons */}
