@@ -1,19 +1,30 @@
-'use client'
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Brain, Search, ChevronDown, Plus, Briefcase } from 'lucide-react'
-import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Brain, Search, ChevronDown, Plus, Briefcase, Menu, X } from "lucide-react";
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 
 export function SiteHeader() {
-  const { data: session } = useSession() // Get session data
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false) // State for dropdown
+  const { data: session } = useSession(); // Get session data
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
       <div className="container mx-auto h-16 flex items-center justify-between gap-4">
+        {/* Hamburger Menu for Mobile */}
+        <div className="lg:hidden">
+          <button
+            className="text-gray-700 hover:text-blue-600"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+
         {/* Logo and Search */}
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center space-x-2">
@@ -26,63 +37,42 @@ export function SiteHeader() {
             <div className="hidden absolute inset-y-0 left-2 flex items-center">
               <Search className="h-4 w-4 text-gray-500" />
             </div>
-            <Input 
-              placeholder="Search AI Opportunities" 
+            <Input
+              placeholder="Search AI Opportunities"
               className="hidden pl-8 bg-gray-50/50 border-gray-200 focus:border-blue-200 focus:ring-blue-200"
             />
           </div>
         </div>
 
-        {/* Main Navigation */}
+        {/* Main Navigation (Desktop) */}
         <nav className="hidden lg:flex items-center gap-8">
-          <Link 
-            href="/courses" 
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
-          >
+          <Link href="/courses" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
             Courses
           </Link>
-          <Link 
-            href="/jobs" 
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
-          >
+          <Link href="/jobs" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
             Jobs
           </Link>
-          <Link 
-            href="/competitions" 
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
-          >
+          <Link href="/competitions" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
             Competitions
           </Link>
-          <Link 
-            href="/mentorship" 
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
-          >
+          <Link href="/mentorship" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
             Mentorship
           </Link>
-          <Link 
-            href="/events" 
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
-          >
+          <Link href="/events" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
             Events
           </Link>
-          <Link 
-            href="/ai-tools" 
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
-          >
+          <Link href="/ai-tools" className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap">
             AI Tools
           </Link>
-          <Link 
-            href="/ai-agents" 
-            className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
-          >
+          <Link href="/ai-agents" className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap">
             AI Agents
           </Link>
         </nav>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="hidden md:inline-flex items-center gap-1 border-gray-200 hover:border-blue-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600"
             asChild
           >
@@ -90,28 +80,27 @@ export function SiteHeader() {
               <Plus className="h-4 w-4" /> Host
             </Link>
           </Button>
-          <Button 
+          <Button
             variant="default"
             className="hidden lg:inline-flex items-center gap-2 bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200"
             asChild
           >
             <Link href="/business">
-              <Briefcase className="h-4 w-4" />
-              For Business
+              <Briefcase className="h-4 w-4" /> For Business
             </Link>
           </Button>
 
           {/* Profile Section */}
           {!session ? (
             <>
-              <Button 
+              <Button
                 variant="ghost"
                 className="text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                 asChild
               >
                 <Link href="/login">Login</Link>
               </Button>
-              <Button 
+              <Button
                 variant="default"
                 className="bg-blue-600 hover:bg-blue-700 text-white"
                 asChild
@@ -166,9 +155,35 @@ export function SiteHeader() {
           )}
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-white border-t border-gray-200 shadow-md">
+          <nav className="flex flex-col items-start gap-4 p-4">
+            <Link href="/courses" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+              Courses
+            </Link>
+            <Link href="/jobs" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+              Jobs
+            </Link>
+            <Link href="/competitions" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+              Competitions
+            </Link>
+            <Link href="/mentorship" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+              Mentorship
+            </Link>
+            <Link href="/events" className="text-sm text-gray-600 hover:text-blue-600 transition-colors">
+              Events
+            </Link>
+            <Link href="/ai-tools" className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap">
+              AI Tools
+            </Link>
+            <Link href="/ai-agents" className="text-sm text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap">
+              AI Agents
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
-  )
+  );
 }
-
-
-
